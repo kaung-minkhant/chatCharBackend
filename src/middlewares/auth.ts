@@ -5,25 +5,23 @@ import dotenv from "dotenv";
 import { AuthRequestObject } from "./type";
 import { conlog } from "../helpers/utils";
 import { UserSessionCache } from "../helpers/types";
+import { ControllerResponseObject } from "../controllers/types";
 
 dotenv.config();
 
-async function getUser(jwt: string, refreshToken: string) {
+async function getUser(jwt: string) {
   const supabaseInstance = createClient(
     process.env.SUPABASE_URL || "",
     process.env.SUPABASE_ANON_KEY || "",
     {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-        detectSessionInUrl: false,
+      global: {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
       },
     }
   );
-  const { data, error } = await supabaseInstance.auth.setSession({
-    access_token: jwt,
-    refresh_token: refreshToken
-  });
+  const { data, error } = await supabaseInstance.auth.getUser(jwt);
   if (error) return { data: null, error };
   return { data, error: null, supabaseInstance };
 }
@@ -34,13 +32,16 @@ export const AuthMiddleWare = async (
   next: NextFunction
 ) => {
   const request: AuthRequestObject = req;
-  // TODO: change this to match what ako sent in viber
-  const tokens = request.cookies['sb-'+process.env.PROJECT_ID+'-auth-token'] as string
-  const sanitizedToken = tokens.slice(1, tokens.length-1).split(',')
-  const jwt = sanitizedToken[0]
-  const refreshToken = sanitizedToken[1]
+  const jwt = request.headers["authorization"] || "";
+  const response: ControllerResponseObject = {
+    data: null,
+    error: null,
+    code: 200,
+  };
   if (!jwt) {
-    return res.status(401).send({ error: "You are not authorized" });
+    response.code = 401;
+    response.error = "You are not authorized";
+    return res.status(401).send(response);
   }
   try {
     if (userSessions.has(jwt)) {
@@ -49,9 +50,11 @@ export const AuthMiddleWare = async (
       request.supabase = data?.supabase;
       request.user = data?.user;
     } else {
-      const { data, error, supabaseInstance } = await getUser(jwt, refreshToken);
+      const { data, error, supabaseInstance } = await getUser(jwt);
       if (error) {
-        return res.status(401).send({ error: "You are not authorized" });
+        response.code = 401;
+        response.error = "You are not authorized";
+        return res.status(401).send(response);
       }
       userSessions.set<UserSessionCache>(jwt, {
         supabase: supabaseInstance,
@@ -62,8 +65,8 @@ export const AuthMiddleWare = async (
     }
     next();
   } catch (error) {
-    return res.status(500).send({
-      error: "Something went wrong processing jwt" + error,
-    });
+    response.code = 500;
+    response.error = "Something went wrong processing jwt: " + error
+    return res.status(500).send(response);
   }
 };

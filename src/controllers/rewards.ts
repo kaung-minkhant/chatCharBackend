@@ -1,11 +1,12 @@
-import express, {  Response } from "express";
+import express, { Response } from "express";
 import { AuthMiddleWare } from "../middlewares/auth";
-import { AuthRequestObject, TaskRequestObject } from "../middlewares/type";
+import { AuthRequestObject, RewardRequestObject } from "../middlewares/type";
 import { giveRewards } from "../handlers/rewards";
 
 import dotenv from "dotenv";
 import { RewardMiddleWare } from "../middlewares";
 import { GiveRewardDto } from "./dto/reward";
+import { ControllerResponseObject } from "./types";
 
 dotenv.config();
 
@@ -19,18 +20,28 @@ rewardsRouter.get("/", (req: AuthRequestObject, res: Response) => {
   res.status(200).send("Reward GET endpoint\n");
 });
 
-rewardsRouter.post("/", async (req: TaskRequestObject, res: Response) => {
+rewardsRouter.post("/", async (req: RewardRequestObject, res: Response) => {
   const supabase = req.supabase;
-  const userId = req.user?.id;
+  const userId = req.user!.id;
   const taskMap = req.taskMap;
   const requestBody: GiveRewardDto = req.body;
-  const taskType = requestBody.taskType
-  const taskId = taskMap?.get(taskType)
-  const { error, token, code } = await giveRewards(supabase!, userId!, taskId!);
+  const task = taskMap?.get(requestBody.taskType);
+  const {
+    error,
+    data: { token },
+    code,
+  } = await giveRewards(supabase!, userId!, task!.id, task!.token);
+  const response: ControllerResponseObject = {
+    code: code,
+    data: null,
+    error: null,
+  };
   if (error) {
-    res.status(code).send(error);
+    response.error = error
+    res.status(code).send(response);
     return;
   }
+  response.data = {token}
   res.status(code).send({ token });
   return;
 });

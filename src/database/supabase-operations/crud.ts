@@ -1,5 +1,6 @@
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 import { SupabaseClient } from "@supabase/supabase-js";
+import { ReturnObject } from "../../types";
 
 // create
 
@@ -63,7 +64,7 @@ export async function getAllRows<T>(
   supabase: SupabaseClient,
   tableName: string
 ) {
-  const response: { data: T[] | null; error: any } = {
+  const response: {data: T[] | null, error: any | null} = {
     data: null,
     error: null,
   };

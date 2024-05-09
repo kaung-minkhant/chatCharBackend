@@ -7,6 +7,6 @@ export interface AuthRequestObject extends Request {
   user?: User;
 }
 
-export interface TaskRequestObject extends AuthRequestObject {
-  taskMap?: Map<string, number>;
+export interface RewardRequestObject extends AuthRequestObject {
+  taskMap?: Map<string, {id: number, token: number}>;
 }
