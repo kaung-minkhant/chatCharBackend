@@ -1,1 +1,1 @@
-export * from './rewards/rewards'
+export * from './rewards'

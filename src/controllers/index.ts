@@ -1,5 +1,6 @@
 import express from 'express'
 import rewardsRouter from './rewards'
+import { AuthMiddleWare } from '../middlewares'
 
 const router = express.Router()
 
@@ -30,10 +31,13 @@ const router = express.Router()
  *                                           -> response with 200 status and token data
  */
 
-router.use('/rewards', rewardsRouter)
 
 router.get('/', (req, res) => {
   res.status(200).send("OK")
 })
+
+router.use(AuthMiddleWare)
+
+router.use('/rewards', rewardsRouter)
 
 export default router

@@ -1,5 +1,4 @@
 import express, { Response } from "express";
-import { AuthMiddleWare } from "../middlewares/auth";
 import { AuthRequestObject, RewardRequestObject } from "../middlewares/type";
 import { giveRewards } from "../handlers/rewards";
 
@@ -12,9 +11,8 @@ dotenv.config();
 
 const rewardsRouter = express.Router();
 
-rewardsRouter.use(AuthMiddleWare);
 
-rewardsRouter.use(RewardMiddleWare);
+rewardsRouter.use('/', RewardMiddleWare);
 
 rewardsRouter.get("/", (req: AuthRequestObject, res: Response) => {
   res.status(200).send("Reward GET endpoint\n");
