@@ -5,20 +5,14 @@ const router = express.Router()
 
 
 
-
 /**
  * 
  *  Rewards API 
  *  
- *  GET / 
- *  Retrieve the rewards 
- *  Additional Headers:
- *    - authorization: JWT Token 
- *  
  *  POST /
  *  Give Rewards to user
  *  Body:
- *    - type: SIGN_UP | PROFILE_SETUP | AI_SETUP 
+ *    - type: SignUp | ProfileSetup | AiSetup 
  *  Additional Headers:
  *    - authorization: JWT Token 
  * 

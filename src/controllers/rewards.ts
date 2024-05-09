@@ -1,11 +1,11 @@
-import express, { Request, Response } from "express";
+import express, {  Response } from "express";
 import { AuthMiddleWare } from "../middlewares/auth";
 import { AuthRequestObject, TaskRequestObject } from "../middlewares/type";
-import { giveRewards } from "../handlers";
+import { giveRewards } from "../handlers/rewards";
 
 import dotenv from "dotenv";
-import { conlog } from "../helpers/utils";
 import { RewardMiddleWare } from "../middlewares";
+import { GiveRewardDto } from "./dto/reward";
 
 dotenv.config();
 
@@ -22,10 +22,11 @@ rewardsRouter.get("/", (req: AuthRequestObject, res: Response) => {
 rewardsRouter.post("/", async (req: TaskRequestObject, res: Response) => {
   const supabase = req.supabase;
   const userId = req.user?.id;
-  // TODO: rethink of how to get taskType from client
   const taskMap = req.taskMap;
-  const taskType = 'SignUp'
-  const { error, token, code } = await giveRewards(supabase!, userId!, taskMap?.get(taskType)!);
+  const requestBody: GiveRewardDto = req.body;
+  const taskType = requestBody.taskType
+  const taskId = taskMap?.get(taskType)
+  const { error, token, code } = await giveRewards(supabase!, userId!, taskId!);
   if (error) {
     res.status(code).send(error);
     return;

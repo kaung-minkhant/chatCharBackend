@@ -1,13 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import {
-  getAllRows,
-  getSpecificRows,
-  insertData,
-} from "../../database/supabase-operations/crud";
-import { conlog } from "../../helpers/utils";
+import { getSpecificRows, insertData } from "../../database/supabase-operations/crud";
 import { TaskMaster, TaskTable, TokenTable } from "../../models";
-
-export const getRewards = async () => {};
 
 export const giveRewards = async (
   supabase: SupabaseClient,
