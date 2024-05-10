@@ -1,6 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getSpecificRows, insertData } from "../../database/supabase-operations/crud";
-import { TaskMaster, TaskTable, TokenTable } from "../../models";
+import { TaskTable, TokenTable } from "../../models";
 import { HandlerReturnObject } from "../types";
 
 export const giveRewards = async (

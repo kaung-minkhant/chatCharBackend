@@ -64,7 +64,7 @@ export async function getAllRows<T>(
   supabase: SupabaseClient,
   tableName: string
 ) {
-  const response: {data: T[] | null, error: any | null} = {
+  const response: { data: T[] | null; error: any | null } = {
     data: null,
     error: null,
   };
@@ -125,4 +125,28 @@ export async function getSpecificRows<T>(
 }
 
 // update
+export async function updateData<T>(
+  supabase: SupabaseClient,
+  tableName: string,
+  updatedData: any,
+  colName: string,
+  colValue: any
+) {
+  const response: { data: T[] | null; error: any | null } = {
+    data: null,
+    error: null,
+  };
+  const { data, error } = await supabase
+    .from(tableName)
+    .update(updatedData)
+    .eq(colName, colValue)
+    .select();
+
+  if (error) {
+    response.error = error;
+    return response;
+  }
+  response.data = data;
+  return response;
+}
 // delete

@@ -32,7 +32,8 @@ export const AuthMiddleWare = async (
   next: NextFunction
 ) => {
   const request: AuthRequestObject = req;
-  const jwt = request.headers["authorization"] || "";
+  const jwt = ( request.headers["authorization"] || request.headers["Authorization"] || "" ) as string;
+  conlog("Token", jwt)
   const response: ControllerResponseObject = {
     data: null,
     error: null,

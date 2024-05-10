@@ -10,10 +10,10 @@ const router = express.Router()
  * 
  *  Rewards API 
  *  
- *  POST /
+ *  POST /rewards
  *  Give Rewards to user
  *  Body:
- *    - type: SignUp | ProfileSetup | AiSetup 
+ *    - taskType: SignUp | ProfileSetup | AiSetup 
  *  Additional Headers:
  *    - authorization: JWT Token 
  * 

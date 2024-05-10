@@ -1,5 +1,6 @@
 import {Age} from './age'
 import {Gender} from './gender'
+import {Language} from './language'
 export interface Profiles {
   id?: string;
   username: string;
@@ -9,4 +10,5 @@ export interface Profiles {
   updated_at?: string;
   age: number | Age;
   gender: number | Gender;
+  language: number | Language;
 }
