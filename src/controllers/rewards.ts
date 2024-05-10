@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { RewardMiddleWare } from "../middlewares";
 import { GiveRewardDto } from "./dto/reward";
 import { ControllerResponseObject } from "./types";
+import { conlog } from "../helpers/utils";
 
 dotenv.config();
 
@@ -26,7 +27,7 @@ rewardsRouter.post("/", async (req: RewardRequestObject, res: Response) => {
   const task = taskMap?.get(requestBody.taskType);
   const {
     error,
-    data: { token },
+    data,
     code,
   } = await giveRewards(supabase!, userId!, task!.id, task!.token);
   const response: ControllerResponseObject = {
@@ -39,6 +40,7 @@ rewardsRouter.post("/", async (req: RewardRequestObject, res: Response) => {
     res.status(code).send(response);
     return;
   }
+  const token = data.token
   response.data = {token}
   res.status(code).send({ token });
   return;

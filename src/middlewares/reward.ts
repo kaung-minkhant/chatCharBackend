@@ -22,6 +22,7 @@ export const RewardMiddleWare = async (
   res: Response,
   next: NextFunction
 ) => { 
+  conlog("Reward Middleware Triggered")
   const request: RewardRequestObject = req
   const {data, error} = await getRewardsTypes(req.supabase!)
   if (error) {

@@ -34,23 +34,6 @@ export const giveRewards = async (
     return response;
   }
 
-  // // get task table for token count
-  // const { data: taskMasterData, error: taskMasterError } =
-  //   await getSpecificRows<TaskMaster>(supabase, "tasks_master", "id", taskType);
-  // if (taskMasterData?.length === 0) {
-  //   response.code = 400;
-  //   response.error = `Error occured: No task with the given task id ${taskType} found`;
-  //   return response;
-  // }
-  // if (taskMasterError) {
-  //   response.code = 500;
-  //   response.error = `Error occured: ${taskMasterError}`;
-  //   return response;
-  // }
-
-  // // get token count related to task
-  // const token = taskMasterData![0].token;
-
   // insert into task table with correct token
   const newData: TaskTable = {
     complete: true,

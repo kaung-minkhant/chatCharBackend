@@ -4,14 +4,12 @@ import ip from 'ip'
 import cors from 'cors'
 import { LoggerMiddleWare } from './middlewares';
 import bodyParser from 'body-parser';
-import CookieParser from 'cookie-parser'
 
 const app = express();
 const port = 4000;
 
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
-app.use(CookieParser())
 
 app.use(cors())
 
