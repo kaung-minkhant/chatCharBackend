@@ -1,6 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getSpecificRows, insertData } from "../../database/supabase-operations/crud";
-import { TaskTable, TokenTable } from "../../models";
+import { TaskTableType, TokenTableType } from "../../models";
 import { HandlerReturnObject } from "../types";
 
 export const giveRewards = async (
@@ -17,7 +17,7 @@ export const giveRewards = async (
 
   // check if reward is given
   const { data: rewardData, error: rewardError } =
-    await getSpecificRows<TokenTable>(
+    await getSpecificRows<TokenTableType>(
       supabase,
       "token_table",
       ["user_id", "task_type"],
@@ -35,13 +35,13 @@ export const giveRewards = async (
   }
 
   // insert into task table with correct token
-  const newData: TaskTable = {
+  const newData: TaskTableType = {
     complete: true,
     token: token,
     type: taskType,
     user_id: userId,
   };
-  const { error: taskError } = await insertData<TaskTable>(
+  const { error: taskError } = await insertData<TaskTableType>(
     supabase,
     "task_table",
     newData

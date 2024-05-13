@@ -3,12 +3,12 @@ import { AuthRequestObject, RewardRequestObject } from "./type";
 import { getAllRows } from "../database/supabase-operations/crud";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { conlog } from "../helpers/utils";
-import { TaskMaster } from "../models";
+import { TaskMasterType } from "../models";
 import { ReturnObject } from "../types";
 import { ControllerResponseObject } from "../controllers/types";
 
 const getRewardsTypes = async (supabase: SupabaseClient): Promise<ReturnObject> => {
-  const {data, error} = await getAllRows<TaskMaster>(supabase, 'tasks_master')
+  const {data, error} = await getAllRows<TaskMasterType>(supabase, 'tasks_master')
   if (error) {
     return {data: null, error: error}
   }

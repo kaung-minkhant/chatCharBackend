@@ -1,16 +1,17 @@
 import express, { Response } from "express";
 import { AuthRequestObject, RewardRequestObject } from "../middlewares/type";
-import { giveRewards } from "../handlers/rewards";
+import { deleteAllRewards, giveRewards } from "../handlers/rewards";
 
 import { RewardMiddleWare } from "../middlewares";
-import { GiveRewardDto } from "./dto/reward";
+import { GiveRewardDtoSchema, GiveRewardDtoType } from "./dto/reward";
 import { ControllerResponseObject } from "./types";
+import { conlog, formatZodIssuesWithPath } from "../helpers/utils";
 
 const rewardsRouter = express.Router();
 
 rewardsRouter.use("/", RewardMiddleWare);
 
-rewardsRouter.get("/", (req: AuthRequestObject, res: Response) => {
+rewardsRouter.get("/", (req: RewardRequestObject, res: Response) => {
   res.status(200).send("Reward GET endpoint\n");
 });
 
@@ -18,16 +19,18 @@ rewardsRouter.post("/", async (req: RewardRequestObject, res: Response) => {
   const supabase = req.supabase;
   const userId = req.user!.id;
   const taskMap = req.taskMap;
-  const requestBody: GiveRewardDto = req.body;
+  const requestBody: GiveRewardDtoType = req.body;
   const task = taskMap?.get(requestBody.taskType);
   const response: ControllerResponseObject = {
     code: 200,
     data: null,
     error: null,
   };
-  if (!task) {
+  const results = GiveRewardDtoSchema.safeParse(requestBody)
+  if (!results.success) {
     response.code = 404;
-    response.error = "Task not found";
+    const error = formatZodIssuesWithPath(results.error.issues, Object.keys(GiveRewardDtoSchema.shape), false);
+    response.error = error;
     res.status(404).send(response);
     return;
   }
@@ -48,5 +51,22 @@ rewardsRouter.post("/", async (req: RewardRequestObject, res: Response) => {
   res.status(code).send({ token });
   return;
 });
+
+rewardsRouter.delete("/all", async (req: RewardRequestObject, res: Response) => {
+  const supabase = req.supabase;
+  const {code, error} = await deleteAllRewards(supabase!)
+  const response: ControllerResponseObject = {
+    code: 200,
+    data: null,
+    error: null,
+  };
+  if (error) {
+    response.code = code;
+    response.error = error
+    return res.status(code).send(response)
+  }
+  return res.status(200).send(response)
+
+})
 
 export default rewardsRouter;

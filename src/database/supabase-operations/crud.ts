@@ -149,4 +149,16 @@ export async function updateData<T>(
   response.data = data;
   return response;
 }
+
 // delete
+export async function deleteData(supabase: SupabaseClient, tableName: string) {
+  const response: {error: any | null} = {
+    error: null
+  }
+  const {error} = await supabase.from(tableName).delete().neq('id', 0)
+  if (error) {
+    response.error = error
+    return response
+  }
+  return response
+}

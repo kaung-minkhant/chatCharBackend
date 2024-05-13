@@ -1,6 +1,7 @@
 import express from 'express'
 import rewardsRouter from './rewards'
 import { AuthMiddleWare } from '../middlewares'
+import balanceRouter from './balance'
 
 const router = express.Router()
 
@@ -39,5 +40,7 @@ router.get('/', (req, res) => {
 router.use(AuthMiddleWare)
 
 router.use('/rewards', rewardsRouter)
+
+router.use('/balance', balanceRouter)
 
 export default router
