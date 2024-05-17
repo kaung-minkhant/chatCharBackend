@@ -20,6 +20,7 @@ rewardsRouter.post("/", async (req: RewardRequestObject, res: Response) => {
   const userId = req.user!.id;
   const taskMap = req.taskMap;
   const requestBody: GiveRewardDtoType = req.body;
+  console.log(requestBody)
   const task = taskMap?.get(requestBody.taskType);
   const response: ControllerResponseObject = {
     code: 200,
@@ -29,8 +30,8 @@ rewardsRouter.post("/", async (req: RewardRequestObject, res: Response) => {
   const results = GiveRewardDtoSchema.safeParse(requestBody)
   if (!results.success) {
     response.code = 404;
-    const error = formatZodIssuesWithPath(results.error.issues, Object.keys(GiveRewardDtoSchema.shape), false);
-    response.error = error;
+    const error = formatZodIssuesWithPath(results.error.issues, Object.keys(GiveRewardDtoSchema.shape));
+    response.error = error.get('taskType');
     res.status(404).send(response);
     return;
   }
@@ -48,7 +49,7 @@ rewardsRouter.post("/", async (req: RewardRequestObject, res: Response) => {
   }
   const token = data.token;
   response.data = { token };
-  res.status(code).send({ token });
+  res.status(code).send(response);
   return;
 });
 

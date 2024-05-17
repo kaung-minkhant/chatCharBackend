@@ -1,5 +1,4 @@
 import { SupabaseClient } from '@supabase/supabase-js';
-import { conlog } from './utils';
 /**
  * List all the buckets 
  * @returns {Object} Return Object
@@ -26,7 +25,6 @@ export async function getBucket(supabase: SupabaseClient, bucketName: string) {
   if (error) {
     return { data: null, error };
   }
-  conlog("Bucket data of " + bucketName, data);
   return { data, error: null };
 }
 
@@ -58,14 +56,12 @@ supabase: SupabaseClient,
       contentType: 'image/png'
     });
   if (error) {
-    conlog("Upload error", error);
     return { data: null, publicUrl: null, error, path: null };
   }
   const path = data.path;
   const { data: publicData } = supabase.storage
     .from(bucketName)
     .getPublicUrl(path);
-  conlog("Data from upload", data);
   return { data, publicUrl: publicData.publicUrl, error: null, path };
 }
 

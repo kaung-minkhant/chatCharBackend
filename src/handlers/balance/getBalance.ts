@@ -1,5 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import {HandlerReturnObject} from '../types'
+import { runRpc } from "../../database/supabase-operations/crud";
 
 export const getBalance = async (supabase: SupabaseClient) => {
   const response: HandlerReturnObject = {
@@ -7,7 +8,7 @@ export const getBalance = async (supabase: SupabaseClient) => {
     data: null,
     error: null,
   }
-  const {data, error} = await supabase.rpc('check_balance');
+  const {data, error} = await runRpc<number>(supabase, 'check_balance');
   if (error) {
     response.code = 500
     response.error = error

@@ -47,7 +47,7 @@ export async function getFlatData(supabase: SupabaseClient, tableName: string) {
       ${flatQuery}
     `);
   if (flatError || error) {
-    return { data: null, error: flatError || error };
+    return { data: null, error: flatError?.message || error?.message };
   }
   return { data: flatData, error: null };
 }
@@ -68,9 +68,12 @@ export async function getAllRows<T>(
     data: null,
     error: null,
   };
-  const { data, error } = await supabase.from(tableName).select();
+  const { data, error } = await supabase.from(tableName).select()
+  .order('id', {
+    ascending: true
+  });
   if (error) {
-    response.error = error;
+    response.error = error.message;
     return response;
   }
   response.data = data;
@@ -103,7 +106,7 @@ export async function getSpecificRows<T>(
     query = supabase.from(tableName).select().eq(columns, values);
     const { data, error } = await query;
     if (error) {
-      response.error = error;
+      response.error = error.message;
       return response;
     }
     response.data = data;
@@ -115,7 +118,7 @@ export async function getSpecificRows<T>(
     });
     const { data, error } = await query;
     if (error) {
-      response.error = error;
+      response.error = error.message;
       return response;
     }
     response.data = data;
@@ -143,7 +146,7 @@ export async function updateData<T>(
     .select();
 
   if (error) {
-    response.error = error;
+    response.error = error.message;
     return response;
   }
   response.data = data;
@@ -152,13 +155,58 @@ export async function updateData<T>(
 
 // delete
 export async function deleteData(supabase: SupabaseClient, tableName: string) {
-  const response: {error: any | null} = {
-    error: null
-  }
-  const {error} = await supabase.from(tableName).delete().neq('id', 0)
+  const response: { error: any | null } = {
+    error: null,
+  };
+  const { error } = await supabase.from(tableName).delete().neq("id", 0);
   if (error) {
-    response.error = error
-    return response
+    response.error = error.message;
+    return response;
   }
-  return response
+  return response;
 }
+
+// rpc
+export async function runRpc<T>(
+  supabase: SupabaseClient,
+  rpc: string,
+  args: Record<string, any> = {}
+) {
+  const response: { data: T[] | null; error: any | null } = {
+    data: null,
+    error: null,
+  };
+  if (Object.keys(args)) {
+    const { data, error } = await supabase.rpc(rpc, args);
+    if (error) {
+      response.error = error.message;
+      return response;
+    }
+    response.data = data;
+    return response;
+  }
+  const { data, error } = await supabase.rpc(rpc);
+  if (error) {
+    response.error = error.message;
+    return response;
+  }
+  response.data = data;
+  return response;
+}
+
+// for ko htoo myat
+// export async function getMetaData() {
+//   const age = getAllRows('age')
+//   const gender = getAllRows('gender')
+//   const interest = getAllRows('interests')
+//   const [ageResponse, genderResponse, interestResponse] = await Promise.all([age, gender, interest])
+//   const response = {
+//     genderData: genderResponse.data,
+//     genderError: genderResponse.error,
+//     ageData: ageResponse.data,
+//     ageError: ageResponse.error,
+//     interestData: interestResponse.data,
+//     interestError: interestResponse.error,
+//   }
+//   return response
+// }

@@ -22,7 +22,7 @@ async function getUser(jwt: string) {
     }
   );
   const { data, error } = await supabaseInstance.auth.getUser(jwt);
-  if (error) return { data: null, error };
+  if (error) return { data: null, error: error.message, supabaseInstance: null };
   return { data, error: null, supabaseInstance };
 }
 
@@ -47,22 +47,22 @@ export const AuthMiddleWare = async (
   try {
     if (userSessions.has(jwt)) {
       const data = userSessions.get<UserSessionCache>(jwt);
-      conlog("Here");
+      conlog("Using cache");
       request.supabase = data?.supabase;
       request.user = data?.user;
     } else {
       const { data, error, supabaseInstance } = await getUser(jwt);
       if (error) {
         response.code = 401;
-        response.error = "You are not authorized";
+        response.error = error;
         return res.status(401).send(response);
       }
       userSessions.set<UserSessionCache>(jwt, {
-        supabase: supabaseInstance,
-        user: data.user,
+        supabase: supabaseInstance!,
+        user: data!.user,
       });
-      request.supabase = supabaseInstance;
-      request.user = data.user!;
+      request.supabase = supabaseInstance!;
+      request.user = data!.user;
     }
     next();
   } catch (error) {

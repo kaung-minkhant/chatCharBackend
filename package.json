@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "dev": "nodemon src/index.ts"
+    "start": "ts-node --require ./instrumentation/instrumentation.ts src/index.ts",
+    "dev": "nodemon --require ./instrumentation/instrumentation.ts src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,16 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.8.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.46.0",
+    "@opentelemetry/exporter-zipkin": "^1.24.1",
+    "@opentelemetry/instrumentation-express": "^0.39.0",
+    "@opentelemetry/instrumentation-http": "^0.51.1",
+    "@opentelemetry/resources": "^1.24.1",
+    "@opentelemetry/sdk-metrics": "^1.24.1",
+    "@opentelemetry/sdk-node": "^0.51.1",
+    "@opentelemetry/sdk-trace-node": "^1.24.1",
+    "@opentelemetry/semantic-conventions": "^1.24.1",
     "@supabase/supabase-js": "^2.43.1",
     "@types/cookie-parser": "^1.4.7",
     "body-parser": "^1.20.2",
