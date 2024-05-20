@@ -1,9 +1,12 @@
 version: "3.8"
 services:
- api:
-  build:
-   context: .
-   target: production
-
-  ports:
-   - 4000:4000
+  api:
+    image: polarkaung1999/chatchar-reward-service:latest
+    build:
+      context: .
+      target: production
+    ports:
+      - 4000:4000
+    env_file:
+      - path: ./.env
+        required: true

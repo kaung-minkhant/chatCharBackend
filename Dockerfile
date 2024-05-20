@@ -1,25 +1,33 @@
 #Build stage
-FROM node:16.17.0-bullseye-slim
+FROM node:22.2.0-bullseye-slim as build
+
+RUN apt-get update && apt-get install -y --no-install-recommends dumb-init
 
 WORKDIR /app
 
-COPY package*.json .
+COPY --chown=node:node package*.json /app
 
 RUN npm install
 
-COPY . .
+COPY --chown=node:node . .
 
 RUN npm run build
 
 #Production stage
-FROM node:16.17.0-bullseye-slim AS production
+FROM node:22.2.0-bullseye-slim AS production
+
+ENV NODE_EN porduction
+
+COPY --from=build /usr/bin/dumb-init /usr/bin/dumb-init
 
 WORKDIR /app
 
-COPY package*.json .
+COPY --chown=node:node package*.json /app
 
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
-COPY --from=build /app/dist ./dist
+COPY --chown=node:node --from=build /app/dist /app/dist
 
-CMD ["node", "dist/index.js"]
+USER node
+
+CMD ["dumb-init", "node", "dist/index.js"]
