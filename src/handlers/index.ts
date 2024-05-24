@@ -1,2 +1,2 @@
 export * from './rewards'
-export * from './balance'
+export * from './token'

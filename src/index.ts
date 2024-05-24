@@ -4,14 +4,21 @@ import ip from "ip";
 import cors from "cors";
 import { LoggerMiddleWare } from "./middlewares";
 import bodyParser from "body-parser";
+import swaggerDocs from "./swagger";
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const app = express();
-const port = 4000;
+const port = parseInt(process.env.SERVICE_PORT || '4000');
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(cors());
+
+swaggerDocs(app, port)
 
 app.use(LoggerMiddleWare);
 

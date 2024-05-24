@@ -27,15 +27,13 @@ export const RewardMiddleWare = async (
   const {data, error} = await getRewardsTypes(req.supabase!)
   if (error) {
     const response: ControllerResponseObject = {
-      code: 500,
       data: null,
       error: 'Something went wrong: ' + error
     }
-    return res.status(404).send(response)
+    return res.status(500).send(response)
   }
   if (data.size === 0) {
     const response: ControllerResponseObject = {
-      code: 404,
       data: null,
       error: "No Master Tasks are created"
     }

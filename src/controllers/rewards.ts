@@ -1,3 +1,51 @@
+/**
+ * @swagger
+ * tags:
+ *  name: Reward
+ * /rewards:
+ *  get:
+ *    summary: Get Rewards (unimplemented)
+ *    tags: [Reward]
+ *    responses:
+ *      200:
+ *        description: The rewards of the user
+ *  post:
+ *    summary: Give a reward to user
+ *    tags: [Reward]
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/GiveRewardDto'
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *      404:
+ *        description: TaskType not found
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                error: 
+ *                  type: string
+ *                  description: error string
+ *      500:
+ *        description: Internal Error
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                error: 
+ *                  type: string
+ *                  description: error string
+ */
+
 import express, { Response } from "express";
 import { AuthRequestObject, RewardRequestObject } from "../middlewares/type";
 import { deleteAllRewards, giveRewards } from "../handlers/rewards";
@@ -20,16 +68,13 @@ rewardsRouter.post("/", async (req: RewardRequestObject, res: Response) => {
   const userId = req.user!.id;
   const taskMap = req.taskMap;
   const requestBody: GiveRewardDtoType = req.body;
-  console.log(requestBody)
   const task = taskMap?.get(requestBody.taskType);
   const response: ControllerResponseObject = {
-    code: 200,
     data: null,
     error: null,
   };
   const results = GiveRewardDtoSchema.safeParse(requestBody)
   if (!results.success) {
-    response.code = 404;
     const error = formatZodIssuesWithPath(results.error.issues, Object.keys(GiveRewardDtoSchema.shape));
     response.error = error.get('taskType');
     res.status(404).send(response);
@@ -42,7 +87,6 @@ rewardsRouter.post("/", async (req: RewardRequestObject, res: Response) => {
     task!.token
   );
   if (error) {
-    response.code = code;
     response.error = error;
     res.status(code).send(response);
     return;
@@ -57,16 +101,14 @@ rewardsRouter.delete("/all", async (req: RewardRequestObject, res: Response) => 
   const supabase = req.supabase;
   const {code, error} = await deleteAllRewards(supabase!)
   const response: ControllerResponseObject = {
-    code: 200,
     data: null,
     error: null,
   };
   if (error) {
-    response.code = code;
     response.error = error
     return res.status(code).send(response)
   }
-  return res.status(200).send(response)
+  return res.status(code).send(response)
 
 })
 

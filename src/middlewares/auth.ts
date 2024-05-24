@@ -32,15 +32,14 @@ export const AuthMiddleWare = async (
   next: NextFunction
 ) => {
   const request: AuthRequestObject = req;
-  const jwt = ( request.headers["authorization"] || request.headers["Authorization"] || "" ) as string;
+  const jwtString = ( request.headers["authorization"] || request.headers["Authorization"] || "" ) as string;
+  const jwt = jwtString.split(' ')[1]
   conlog("Token", jwt)
   const response: ControllerResponseObject = {
     data: null,
     error: null,
-    code: 200,
   };
   if (!jwt) {
-    response.code = 401;
     response.error = "You are not authorized";
     return res.status(401).send(response);
   }
@@ -53,7 +52,6 @@ export const AuthMiddleWare = async (
     } else {
       const { data, error, supabaseInstance } = await getUser(jwt);
       if (error) {
-        response.code = 401;
         response.error = error;
         return res.status(401).send(response);
       }
@@ -66,7 +64,6 @@ export const AuthMiddleWare = async (
     }
     next();
   } catch (error) {
-    response.code = 500;
     response.error = "Something went wrong processing jwt: " + error
     return res.status(500).send(response);
   }
