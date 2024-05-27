@@ -33,12 +33,16 @@ export const AuthMiddleWare = async (
 ) => {
   const request: AuthRequestObject = req;
   const jwtString = ( request.headers["authorization"] || request.headers["Authorization"] || "" ) as string;
-  const jwt = jwtString.split(' ')[1]
-  conlog("Token", jwt)
+  const splitCount = jwtString.split(' ')
   const response: ControllerResponseObject = {
     data: null,
     error: null,
   };
+  if (splitCount.length !== 2) {
+    response.error = "Authorization token fomat is wrong: It should be Bearer <token>"
+    return res.status(400).send(response)
+  }
+  const jwt = splitCount[0]
   if (!jwt) {
     response.error = "You are not authorized";
     return res.status(401).send(response);
