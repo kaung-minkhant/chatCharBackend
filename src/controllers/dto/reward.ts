@@ -1,4 +1,5 @@
 import {z} from 'zod'
+import { ModelTypeSchema } from './token'
 
 export const TaskTypesSchema = z.enum(['SignUp', 'ProfileSetup', 'AiSetup'], {
   required_error: "taskType is required: SignUp', 'ProfileSetup', 'AiSetup'",
@@ -18,7 +19,8 @@ export const TaskTypesSchema = z.enum(['SignUp', 'ProfileSetup', 'AiSetup'], {
  *          enum: [SignUp, ProfileSetup, AiSetup]
  */
 export const GiveRewardDtoSchema = z.object({
-  taskType: TaskTypesSchema
+  taskType: TaskTypesSchema,
+  model: ModelTypeSchema
 })
 
 

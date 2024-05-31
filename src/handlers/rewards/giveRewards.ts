@@ -5,12 +5,14 @@ import {
 } from "../../database/supabase-operations/crud";
 import { TaskTableType, TokenTableType } from "../../models";
 import { HandlerReturnObject } from "../types";
+import { ModelTypeType } from "../../controllers/dto/token";
 
 export const giveRewards = async (
   supabase: SupabaseClient,
   userId: string,
   taskType: number,
-  token: number
+  token: number,
+  model: ModelTypeType
 ) => {
   const response: HandlerReturnObject = {
     code: 200,
@@ -43,6 +45,7 @@ export const giveRewards = async (
       token: token,
       type: taskType,
       user_id: userId,
+      model: model
     };
     const { error: taskError } = await insertData<TaskTableType>(
       supabase,

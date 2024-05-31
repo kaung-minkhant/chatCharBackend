@@ -14,7 +14,11 @@ export const getMessageToken = (messages: Messages, model: ModelType) => {
   };
   try {
     const tokenCount = openaiTokenCounter.chat(messages, model);
-    response.data = {tokenCount}
+    response.data = {
+      promptTokens: 0,
+      completionTokens: 0,
+      totalTokens: tokenCount
+    }
     return response
   } catch (error: any) {
     response.code = 500;
