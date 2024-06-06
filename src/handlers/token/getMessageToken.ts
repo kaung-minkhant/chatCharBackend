@@ -6,13 +6,14 @@ type Messages = {
   content: string;
 }[];
 
-export const getMessageToken = (messages: Messages, model: ModelType) => {
+export const getMessageToken = (messages: Messages, model: ModelType | 'gpt-4o') => {
   const response: HandlerReturnObject = {
     code: 200,
     data: null,
     error: null,
   };
   try {
+    if (model === 'gpt-4o') model = 'gpt-4'
     const tokenCount = openaiTokenCounter.chat(messages, model);
     response.data = {
       promptTokens: 0,

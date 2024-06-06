@@ -42,7 +42,7 @@ export const AuthMiddleWare = async (
     response.error = "Authorization token fomat is wrong: It should be Bearer <token>"
     return res.status(400).send(response)
   }
-  const jwt = splitCount[0]
+  const jwt = splitCount[1]
   if (!jwt) {
     response.error = "You are not authorized";
     return res.status(401).send(response);
