@@ -5,6 +5,7 @@ import { Request } from "express";
 export interface AuthRequestObject extends Request {
   supabase?: SupabaseClient,
   user?: User;
+  newJwt?: string;
 }
 
 export interface RewardRequestObject extends AuthRequestObject {

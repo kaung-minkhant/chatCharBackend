@@ -13,6 +13,7 @@ tokenRouter.get("/balance", async (req: AuthRequestObject, res: Response) => {
     data: null,
     error: null,
   };
+  if (req.newJwt) response.newJwt = req.newJwt
   const { data, error, code } = await getTokenBalance(supabase!);
   if (error) {
     response.error = error;

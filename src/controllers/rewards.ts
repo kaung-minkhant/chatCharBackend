@@ -72,6 +72,7 @@ rewardsRouter.post("/", async (req: RewardRequestObject, res: Response) => {
     data: null,
     error: null,
   };
+  if (req.newJwt) response.newJwt = req.newJwt
   const results = GiveRewardDtoSchema.safeParse(requestBody)
   if (!results.success) {
     const error = formatZodIssuesWithPath(results.error.issues, Object.keys(GiveRewardDtoSchema.shape), false);
